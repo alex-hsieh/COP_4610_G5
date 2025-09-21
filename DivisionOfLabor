@@ -1,41 +1,53 @@
 Project 1: Division of Labor
 Operating Systems
 
-Group Number:
+Group Number: Group 5
 
 Team Members:
-1. [Member 1]
-2. [Member 2]
-3. [Member 3]
+1. Alexander Hsieh
+2. Andy Gonzalez
+3. Jacky Zhan
 
 Part 1: Prompt
-- [Members]
+- Alexander Hsieh
+- Andy Gonzalez
 
 Part 2: Environment Variables
-- [Members]
+- Andy Gonzalez
+- Jacky Zhan
 
 Part 3: Tilde Expansion
-- [Members]
+- Alexander Hsiesh
+- Jacky Zhan
 
 Part 4: $PATH Search
-- [Members]
+- Andy Gonzalez
+- Jacky Zhan
 
 Part 5: External Command Execution
-- [Members]
+- Andy Gonzalez
+- Jacky Zhan
 
 Part 6: I/O Redirection
-- [Members]
+- Alexander Hsieh
+- Jacky Zhan
 
 Part 7: Piping
-- [Members]
+- Alexander Hsieh
+- Andy Gonzalez
 
 Part 8: Background Processing
-- [Members]
+- Andy Gonzalez
+- Jacky Zhan
 
 Part 9: Internal Command Execution
-- [Members]
+- exit: Alexander Hsieh
+- cd PATH: Andy Gonzalez
+- jobs: Jacky Zhan
 
 Extra Credit
-- [Members]
+- Support unlimited number of pipes: Alexander Hsieh
+- Support piping and I/O redirection in a single command: Andy Gonzalez
+- Shell-ception: Jacky Zhan
 
 Please note that these assignments are subject to discussion and adjustment based on the team's agreement and individual expertise. Regular communication and collaboration among team members are encouraged to ensure successful completion of the project.
