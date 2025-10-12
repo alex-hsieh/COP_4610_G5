@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project 2: Elevator Kernel Module</title>
+    <style type="text/css">
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+        padding: 0;
+        color: #111;
+        background: #fff;
+      }
+
+      h1, h2, h3 {
+        line-height: 1.25;
+        margin: 1.25rem 0 0.5rem;
+      }
+
+      hr { margin: 1rem 0 1.5rem; }
+
+      p { text-align: justify; }
+      .style1 { list-style-type: none; }
+      .style2 { list-style-type: circle; }
+      .style3 { font-family: "Courier New", Courier, monospace; }
+      .style4 { font-size: 1.5rem; }
+
+      blockquote.style3, .cmd {
+        font-family: "Courier New", Courier, monospace;
+        background: #f7f7f9;
+        border-left: 4px solid #ddd;
+        padding: 10px 12px;
+        margin: 0.75rem 0;
+        overflow-x: auto;
+        white-space: pre-wrap;
+      }
+
+      ul, ol { margin: 0.5rem 0 1rem 2rem; }
+      li { margin: 0.15rem 0; }
+
+      .muted { color: #555; }
+    </style>
+  </head>
+  <body>
+    <h1>Project 2: Elevator Kernel Module</h1>
+    <h2>COP4610: Operating Systems</h2>
+    <p class="style4">Due: Monday, November 3rd, 2025, at 11:59pm</p>
+    <hr />
+
+    <h2>Project Objectives</h2>
+    <ol>
+      <li>
+        Gain hands-on experience with system calls: Understand the fundamental
+        concepts and implementation details of system calls by working on
+        various aspects of kernel programming.
+      </li>
+      <li>
+        Explore kernel programming: Develop a deeper understanding of kernel
+        programming by delving into the intricacies of concurrency and
+        synchronization mechanisms within the kernel.
+      </li>
+      <li>
+        Enhance knowledge of concurrency and synchronization: Apply the acquired
+        knowledge of concurrency and synchronization in the kernel environment
+        to effectively manage and control concurrent access to shared resources.
+      </li>
+      <li>
+        Explore different techniques and approaches to ensure thread safety and
+        prevent race conditions.
+      </li>
+    </ol>
+
+    <h2>Project Description</h2>
+    <p>
+      This project aims to provide hands-on experience with system calls, kernel programming,
+      concurrency, synchronization, and elevator scheduling algorithms. It consists of parts
+      that are built upon each other to deepen your knowledge and skills in these areas.
+    </p>
+    <p>
+      In Part 1, by adding system calls to a C program and verifying their correctness using
+      the <span class="style3">strace</span> tool, you gain hands-on experience with system call integration and
+      learn about the available system calls for your machine. This part lays the foundation for
+      understanding how system calls interact with the kernel.
+    </p>
+    <p>
+      Part 2 takes you further into kernel programming. You will develop a kernel module called
+      <span class="style3">my_timer</span> that retrieves and stores the current time using the
+      <span class="style3">ktime_get_real_ts64()</span> function. This module creates a proc entry and allows you to
+      read the current time and elapsed time since the last call. This part helps you understand
+      how kernel modules work, how to interact with kernel functions, and how to use proc interfaces
+      for communication.
+    </p>
+    <p>
+      Part 3 focuses on a more complex task: implementing a scheduling algorithm for a
+      <b>pet elevator</b>. You create a kernel module representing the elevator, supporting operations
+      like starting, stopping, and issuing requests. The module also provides a
+      <span class="style3">/proc/elevator</span> entry to display important elevator information. This part challenges
+      you to manage concurrency, synchronization, and efficient scheduling within the kernel environment.
+    </p>
+    <p>
+      Each part of the project builds upon the knowledge and skills gained in the previous parts.
+      Part 1 introduces you to system calls and their integration, which forms the basis for kernel programming
+      in Part 2. Part 2 expands your understanding of kernel modules and communication through proc interfaces,
+      setting the stage for the more advanced concepts explored in Part 3.
+    </p>
+    <p>
+      By completing this project, you acquire practical experience in system calls, kernel programming,
+      concurrency, synchronization, and scheduling algorithms. These are essential skills for developing
+      efficient and robust software systems, particularly in operating systems and low-level programming
+      domains. Understanding system calls and kernel programming enables you to interact with and extend the
+      functionality of the operating system, while concurrency, synchronization, and scheduling concepts are
+      crucial for efficient resource management and multitasking in complex systems.
+    </p>
+
+    <h2>Division of Labor</h2>
+    <p>Submit your division of labor document on Canvas by 10/8/25.</p>
+
+    <h2>Part 1: System-Call Tracing</h2>
+    <p>Please follow the instructions below to complete Part 1 of the task:</p>
+    <ol>
+      <li>Create an empty C program named <span class="style3">empty</span>.</li>
+      <li>Make a copy of the <span class="style3">empty</span> program and name it <span class="style3">part1</span>.</li>
+      <li>
+        Add exactly five system calls to the <span class="style3">part1</span> program. You can find the available
+        system calls for your machine in <span class="style3">/usr/include/unistd.h</span>.
+      </li>
+      <li>
+        To verify that you have added the correct number of system calls,
+        execute the following commands in the terminal:
+        <blockquote class="style3">
+$ gcc -o empty empty.c
+$ strace -o empty.trace ./empty
+$ gcc -o part1 part1.c
+$ strace -o part1.trace ./part1
+        </blockquote>
+      </li>
+    </ol>
+    <p>
+      To minimize the length of the output from <span class="style3">strace</span>, try to minimize the use
+      of other function calls (e.g., <span class="style3">stdlib.h</span>) in your program.
+    </p>
+    <p>
+      <strong>Note:</strong> Running <span class="style3">strace</span> on an empty C program will generate some system calls.
+      Therefore, when using <span class="style3">strace</span> on your Part 1 code, it should produce five more system calls
+      than the empty program.
+    </p>
+    <p>Please submit the following files:</p>
+    <ul>
+      <li>empty.c</li>
+      <li>empty.trace</li>
+      <li>part1.c</li>
+      <li>part1.trace</li>
+    </ul>
+
+    <h2>Part 2: Timer Kernel Module</h2>
+    <p>
+      In Unix-like operating systems, the time is often represented as the number of seconds since
+      the Unix Epoch (January 1st, 1970). The task requires creating a kernel module named
+      <span class="style3">my_timer</span> that utilizes the function <span class="style3">ktime_get_real_ts64()</span> to retrieve
+      the time value, which includes seconds and nanoseconds since the Epoch.
+    </p>
+    <ol>
+      <li>
+        Develop a kernel module called <span class="style3">my_timer</span> that calls
+        <span class="style3">ktime_get_real_ts64()</span> to obtain the current time. This module should store the time value.
+      </li>
+      <li>
+        When the <span class="style3">my_timer</span> module is loaded using <span class="style3">insmod</span>, it should create a
+        proc entry named <span class="style3">/proc/timer</span>.
+      </li>
+      <li>
+        When the <span class="style3">my_timer</span> module is unloaded using <span class="style3">rmmod</span>, the
+        <span class="style3">/proc/timer</span> entry should be removed.
+      </li>
+      <li>
+        On each read operation of <span class="style3">/proc/timer</span>, utilize the proc interface to print both the
+        current time and the elapsed time since the last call (if valid).
+      </li>
+    </ol>
+
+    <p>To insert a kernel module:</p>
+    <blockquote class="style3">$ sudo insmod my_timer.ko</blockquote>
+    <p>To remove a kernel module:</p>
+    <blockquote class="style3">$ sudo rmmod my_timer.ko</blockquote>
+    <p>To check for your kernel module:</p>
+    <blockquote class="style3">$ lsmod | grep my_timer</blockquote>
+
+    <p>Example Usage:</p>
+    <blockquote class="style3">
+$ cat /proc/timer
+current time: 1518647111.760933999
+
+$sleep 1
+
+$ cat /proc/timer
+current time: 1518647112.768429998
+elapsed time: 1.007495999
+
+$sleep 3
+
+$ cat /proc/timer
+current time: 1518647115.774925999
+elapsed time: 3.006496001
+
+$sleep 5
+
+$ cat /proc/timer
+current time: 1518647120.780421999
+elapsed time: 5.005496000
+    </blockquote>
+
+    <h2>Part 3: Elevator Module</h2>
+    <p>
+      Your task is to implement a scheduling algorithm for a pet elevator.
+      You will create a kernel module <span class="style3">elevator</span> to implement this.
+    </p>
+    <ul>
+      <li>The pet elevator can hold a maximum of <b>5 pets</b> and cannot exceed a maximum weight of <b>50 lbs</b>.</li>
+      <li>Each pet is randomly chosen as a Chihuahua, Pug, Pughuahua, or Dachshund, with equal likelihood.</li>
+      <li>Pets select their starting floor and destination floor.</li>
+      <li>Pets board the elevator in first-in, first-out (FIFO) order.</li>
+      <li>
+        Each type of pet has an assigned weight:
+        <ul>
+          <li>Chihuahua: <b>3 lbs</b></li>
+          <li>Pug: <b>14 lbs</b></li>
+          <li>Pughuahua: <b>10 lbs</b></li>
+          <li>Dachshund: <b>16 lbs</b></li>
+        </ul>
+      </li>
+      <li>Pets on floors wait indefinitely to be serviced.</li>
+      <li>Once a pet boards the elevator, they can only disembark.</li>
+      <li>The elevator must wait for 2.0 seconds when moving between floors and 1.0 seconds when loading/unloading pets.</li>
+      <li>The building has floor 1 as the minimum (lobby) and floor 5 as the maximum.</li>
+      <li>Pets can arrive at any time, and each floor must handle an arbitrary number of them.</li>
+    </ul>
+
+    <h3>Step 1: Add System Calls</h3>
+    <p>
+      Download the latest stable linux-kernel-6.16.x and follow the provided slides to compile your kernel.
+      You can download from the following link:
+    </p>
+    <p><a href="https://www.kernel.org/">Download Kernel</a></p>
+
+    <p>
+      You should move the kernel to your <span class="style3">/usr/src/</span> directory and create a soft link to it as so:
+    </p>
+    <blockquote class="style3">
+$ sudo ln -s /usr/src/[kernel_version] ~/[kernel_version]
+$ cd ~/[kernel_version]
+    </blockquote>
+    <p>This will make it easier to modify from elsewhere instead of editing it in a restricted area.</p>
+
+    <p>
+      Modify the kernel by adding three system calls to control the elevator and
+      create pets. Assign the following numbers to the system calls:
+    </p>
+    <ul>
+      <li>548 for <span class="style3">start_elevator()</span></li>
+      <li>549 for <span class="style3">issue_request()</span></li>
+      <li>550 for <span class="style3">stop_elevator()</span></li>
+    </ul>
+
+    <p>The respective function prototypes are as follows:</p>
+
+    <p class="style3">int start_elevator(void)</p>
+    <p>
+      The <span class="style3">start_elevator()</span> system call activates the elevator for service. From this point forward,
+      the elevator exists and will begin to service requests. It returns 1 if the elevator is already active,
+      0 for a successful start, and -ERRORNUM if initialization fails or -ENOMEM if it could not allocate memory.
+      The elevator is initialized with the following values:
+    </p>
+    <blockquote class="style3">
+State: IDLE
+Current floor: 1
+Current load: 0 pets
+    </blockquote>
+
+    <p class="style3">int issue_request(int start_floor, int destination_floor, int type)</p>
+    <p>
+      The <span class="style3">issue_request()</span> system call creates a request for a pet,
+      specifying the start floor, destination floor, and type of pet
+      (<b>0 = Chihuahua</b>, <b>1 = Pug</b>, <b>2 = Pughuahua</b>, <b>3 = Dachshund</b>).
+      It returns 1 if the request is invalid (e.g., out of range or invalid type) and 0 otherwise.
+    </p>
+
+    <p class="style3">int stop_elevator(void)</p>
+    <p>
+      The <span class="style3">stop_elevator()</span> system call deactivates the elevator. It stops
+      processing new requests (pets waiting on floors), but it must offload all current pets before complete
+      deactivation. Only when the elevator is empty can it be deactivated (state = OFFLINE). The system call
+      returns 1 if the elevator is already in the process of deactivating and 0 otherwise.
+    </p>
+
+    <p>You will need to make these files to add the system calls:</p>
+    <ul>
+      <li>[kernel_version]/syscalls/syscalls.c</li>
+      <li>[kernel_version]/syscalls/Makefile</li>
+    </ul>
+
+    <p>You will need to modify the following files to add the system calls:</p>
+    <ul>
+      <li>[kernel_version]/arch/x86/syscalls/syscall_64.tbl</li>
+      <li>[kernel_version]/include/linux/syscalls.h</li>
+      <li>[kernel_version]/Makefile</li>
+    </ul>
+
+    <h3>Step 2: Compile and Install the Kernel</h3>
+    <p>You will need to disable certain certificates when adding system calls (see slides).</p>
+    <p>
+      Compile the kernel with the new system calls. The kernel should be compiled with the following options:
+    </p>
+    <blockquote class="style3">
+$ make menuconfig
+$ make -j$(nproc)
+$ sudo make modules_install
+$ sudo make install
+$ sudo reboot
+    </blockquote>
+    <p>Check that you installed your kernel by typing this into the terminal:</p>
+    <blockquote class="style3">$ uname -r</blockquote>
+    <p><b>Note:</b> This is a long process! Make sure to do this part early!</p>
+
+    <h3>Step 3: Test System Calls</h3>
+    <p>
+      You should test if you successfully added the system calls to your installed kernel with the provided tests
+      in your starter file in the directory <span class="style3">part3/tests/</span>
+    </p>
+    <p>Run the following commands: </p>
+    <blockquote class="style3">
+$ make
+$ sudo insmod syscalls.ko
+$ ./test_syscalls
+    </blockquote>
+    <p>You should get a message that tells you if you have the system calls installed.</p>
+
+    <h3>Step 4: Implement Elevator</h3>
+    <p>
+      Implement the elevator kernel module. The module should be named <span class="style3">elevator</span>
+      and should be loaded using <span class="style3">insmod</span>. The module should be unloaded using
+      <span class="style3">rmmod</span>.
+    </p>
+    <p>Recall that these are the details:</p>
+    <ul>
+      <li>Use linked lists to handle the number of pets per floor/elevator.</li>
+      <li>Use a kthread to control the elevator movement.</li>
+      <li>Use a mutex to control shared data access between floor and elevators.</li>
+      <li>Use <span class="style3">kmalloc</span> to allocate dynamic memory for pets.</li>
+    </ul>
+
+    <h3>Step 5: Write to the Proc File</h3>
+    <p>
+      The module must provide a proc entry named <span class="style3">/proc/elevator</span>. The following
+      information should be printed (labeled appropriately):
+    </p>
+    <ul>
+      <li>
+        The elevator's movement state:
+        <ul>
+          <li>OFFLINE: when the module is installed but the elevator isn't running (initial state)</li>
+          <li>IDLE: elevator is stopped on a floor because there are no more pets to service</li>
+          <li>LOADING: elevator is stopped on a floor to load and unload pets</li>
+          <li>UP: elevator is moving from a lower floor to a higher floor</li>
+          <li>DOWN: elevator is moving from a higher floor to a lower floor</li>
+        </ul>
+      </li>
+      <li>The current floor the elevator is on</li>
+      <li>The elevator's current load (weight)</li>
+      <li>A list of pets in the elevator</li>
+      <li>The total number of pets waiting</li>
+      <li>The total number of pets serviced</li>
+    </ul>
+
+    <p>For each floor of the building, the following should be printed:</p>
+    <ul>
+      <li>An indicator of whether the elevator is on the floor.</li>
+      <li>The count of waiting pets.</li>
+      <li>For each waiting pet, 2 characters indicate the pet type and destination floor.</li>
+    </ul>
+
+    <p>Example Proc File:</p>
+    <blockquote class="style3">
+Elevator state: LOADING
+Current floor: 4
+Current load: 30 lbs
+Elevator status: C5 D2 P4 H1
+
+[ ] Floor 5: 1 H3
+[ ] Floor 4: 0
+[*] Floor 3: 2 P5 C1
+[ ] Floor 2: 1 D4
+[ ] Floor 1: 0
+
+Number of pets: 4
+Number of pets waiting: 4
+Number of pets serviced: 27
+    </blockquote>
+
+    <p>
+      <span class="style3">C</span> is for Chihuahua,
+      <span class="style3">P</span> is for Pug,
+      <span class="style3">H</span> is for Pughuahua,
+      <span class="style3">D</span> is for Dachshund.
+    </p>
+
+    <h3>Step 6: Test Elevator</h3>
+    <p>
+      Interact with two provided user-space applications that enable
+      communication with the kernel module:
+    </p>
+    <ul>
+      <li>
+        <span class="style3">producer.c</span>: creates pets and issues requests to the elevator 
+        <ul>
+          <li><span class="style3">$ ./producer [number_of_pets]</span></li>
+        </ul>
+      </li>
+      <li>
+        <span class="style3">consumer.c</span>: calls the <span class="style3">start_elevator()</span> or the
+        <span class="style3">stop_elevator()</span> system call.
+        <ul>
+          <li>If the flag is <span class="style3">--start</span>, the program starts the elevator.</li>
+          <li>If the flag is <span class="style3">--stop</span>, the program stops the elevator.</li>
+        </ul>
+      </li>
+    </ul>
+    <p>You can use the following command to see your elevator in action: </p>
+    <blockquote class="style3">$ watch -n [secs] cat [proc_file]</blockquote>
+    <p>The <span class="style3">producer.c</span> and <span class="style3">consumer.c</span> programs will be provided to you.</p>
+
+    <h2>Part 4: Demo</h2>
+    <p>
+      You will be required to give a 15-minute demo of your elevator kernel module to demonstrate your understanding of the project.
+      A week before the project is due, registration for the demonstration will open. The presentations will take place between
+      11/4/25 and 11/14/25. You will present your project and then demonstrate the functionality of your elevator. Your presentation
+      will involve a brief overview of your elevator, a discussion regarding your implementation, and then a demonstration of your
+      elevator. You will be required to demonstrate:
+    </p>
+    <ul>
+      <li>Project source code</li>
+      <li>Kernel system calls</li>
+      <li>Successful compilation of your elevator</li>
+      <li>Successful installation of your elevator</li>
+      <li>Successful execution of system calls</li>
+      <li>Execution of an arbitrary number of test cases on your elevator for 3 minutes</li>
+      <li>Successful removal of your elevator</li>
+    </ul>
+    <p class="muted">
+      Any demonstration failing to compile/install a portion of the project successfully during the demo will receive a 0
+      for that portion of the project. Be sure that you can install and remove all kernel modules before attempting to
+      demonstrate. The grader may also choose to question you on project components. You should be able to demonstrate an
+      understanding of the project’s implementation. It should be noted that all source files will be pulled from your
+      GitHub repository.
+    </p>
+
+    <h2>Helpful Resources</h2>
+    <h3>Linux</h3>
+    <p><a href="https://www.youtube.com/watch?v=85qGRoaOkhQ">Modifying the kernel</a></p>
+    <p><a href="https://ubuntu.com/download/desktop">Ubuntu download</a></p>
+    <p><a href="https://www.kernel.org/">Kernel download</a></p>
+    <h3>C</h3>
+    <p><a href="https://www.kernel.org/doc/html/v4.13/index.html">Kernel documentation</a></p>
+
+    <h2>Assumptions</h2>
+    <p>You can assume that the proc file will only be 10,000 characters long.</p>
+    <p>You can assume that pets will not head to the same floor they entered from.</p>
+    <p>The demo will run on your chosen machine with your chosen kernel module.</p>
+    <p>All code run during the demo will be pulled from your GitHub Classroom repository.</p>
+
+    <h2>Restrictions</h2>
+    <p>You are only allowed to use C.</p>
+    <p>
+      The list of pets waiting at each floor and the list of pets on the elevator
+      must be stored in a linked list, using your own implementation or <span class="style3">linux/list.h</span>.
+    </p>
+    <p>The pets must be allocated dynamically using <span class="style3">kmalloc</span>.</p>
+    <p>The elevator activity must be controlled within a <span class="style3">kthread</span>.</p>
+    <p>The elevator must use locking around shared data, using <span class="style3">mutex</span>.</p>
+    <p>
+      The elevator is not circular. For example, you cannot go from floor 5 to floor 1
+      or from floor 1 to floor 5 in one move.
+    </p>
+
+    <h2><b>Rubric</b></h2>
+    <p>A program with compilation errors will get 0 points (you must demonstrate your project in front of us).</p>
+    <p>
+      Please refer to the standard project guidelines:
+      <a href="https://www.cs.fsu.edu/~cop4610/project-syllabus-f25.html">Project Syllabus</a>
+    </p>
+    <p>Total points: 100</p>
+    <ul>
+      <li>Implementation (70)</li>
+      <li>Documentation (30)</li>
+    </ul>
+
+    <h3>Implementation</h3>
+    <ol>
+      <li>syscalls tracing (5)</li>
+      <li>timer kernel module (10)</li>
+      <li>
+        elevator module (45)
+        <ul>
+          <li>compilation/syscalls [5]</li>
+          <li>use of mutexes [10]</li>
+          <li>use of kthreads [10]</li>
+          <li>general functionality [10]</li>
+          <li>abides by rules [10]</li>
+        </ul>
+      </li>
+      <li>
+        presentation/demo (10)
+        <ul>
+          <li>presentation [5]</li>
+          <li>demonstration [5]</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h3>Documentation</h3>
+    <ul>
+      <li>division of labor (before) (5)</li>
+      <li>
+        readme.md (15)
+        <ul>
+          <li>division of labor (after) [5]</li>
+          <li>file listing [3]</li>
+          <li>description of how to compile and run program [2]</li>
+          <li>development log for each member [3]</li>
+          <li>description of group meetings [2]</li>
+        </ul>
+      </li>
+      <li>
+        project structure (5)
+        <ul>
+          <li>source files are properly split into modular components according to functionality [2]</li>
+          <li>files are appropriately placed in the correct directory following guidelines [2]</li>
+          <li>modules produced in specified directories [1]</li>
+        </ul>
+      </li>
+      <li>
+        format &amp; organization (5)
+        <ul>
+          <li>include all relevant files [1]</li>
+          <li>doesn't include binaries, executables, or modules [1]</li>
+          <li>readability (indentation, white space, max column-width &lt; 100 chars) [1]</li>
+          <li>submission does not contain unnecessary print statements [1]</li>
+          <li>variable/functions names indicate purpose with appropriate comments [1]</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2>Deliverables</h2>
+    <p>You should have the following files/directories in your Git repository:</p>
+    <ul>
+      <li>
+        part 1/
+        <ul>
+          <li>empty.c</li>
+          <li>empty.trace</li>
+          <li>part1.c</li>
+          <li>part1.trace</li>
+          <li>Makefile</li>
+        </ul>
+      </li>
+      <li>
+        part 2/
+        <ul>
+          <li>src/</li>
+          <li>Makefile</li>
+        </ul>
+      </li>
+      <li>
+        part 3/
+        <ul>
+          <li>src/</li>
+          <li>Makefile</li>
+          <li>syscalls.c</li>
+        </ul>
+      </li>
+      <li>Makefile</li>
+      <li>README.md</li>
+    </ul>
+    <p>
+      For this project, you only need to organize your source code and header files into the
+      <span class="style3">src/</span> folder.
+    </p>
+    <p>Do not include your final executable(s) in your repository; doing so will result in a deduction!</p>
+    <p>
+      For part 2 and part 3, your makefile should produce a kernel module,
+      <span class="style3">my_timer.ko</span> and <span class="style3">elevator.ko</span> respectively.
+    </p>
+
+    <h2>Submissions</h2>
+    <p>Program submissions will be done through GitHub Classroom.</p>
+  </body>
+</html>
