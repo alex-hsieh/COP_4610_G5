@@ -30,12 +30,18 @@ void shell_run(void) {
     }
 }
 
-// Get the current shell prompt string based on mounted image
+// Get the current shell prompt string based on mounted image and current path
 const char* shell_get_prompt(void) {
-    static char prompt[300];
+    static char prompt[600];
     
     if (ctx != NULL && ctx->fp != NULL) {
-        snprintf(prompt, sizeof(prompt), "%s/>", ctx->image_name);
+        if (ctx->current_path[0] != '\0') {
+            // We're in a subdirectory: "fat32.img/RED/>"
+            snprintf(prompt, sizeof(prompt), "%s%s/>", ctx->image_name, ctx->current_path);
+        } else {
+            // We're in root: "fat32.img/>"
+            snprintf(prompt, sizeof(prompt), "%s/>", ctx->image_name);
+        }
     } else {
         snprintf(prompt, sizeof(prompt), "/>");
     }
