@@ -46,6 +46,10 @@ typedef struct {
     uint32_t first_data_sector;    // First data sector
     uint32_t total_clusters;       // Total number of clusters
     uint32_t bytes_per_cluster;    // Bytes per cluster
+
+    uint32_t current_cluster;	  // Current directory's cluster number
+    char current_path[256];       // Current path for display
+
 } FAT32_Context;
 
 // Global context - accessible to all modules
