@@ -12,6 +12,10 @@ bool fat32_mount(const char *image_path) {
     if (ctx == NULL) {
         fprintf(stderr, "Error: Failed to allocate memory for FAT32 context\n");
         return false;
+    ctx->current_cluster = ctx->boot.BPB_RootClus;
+    strcopy(ctx->current_path, "/");
+
+    return 0;
     }
     
     // Initialize context
