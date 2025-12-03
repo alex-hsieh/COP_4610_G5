@@ -37,6 +37,31 @@ typedef struct __attribute__((packed)) {
     uint16_t Signature;            // Offset 510: Boot signature (0xAA55)
 } BPB;
 
+typedef struct __attribute__((packed)) {
+    uint8_t  DIR_Name[11];      // Offset 0: Name (8) + Extension (3)
+    uint8_t  DIR_Attr;          // Offset 11: Attributes
+    uint8_t  DIR_NTRes;         // Offset 12: Reserved
+    uint8_t  DIR_CrtTimeTenth;  // Offset 13: Creation time
+    uint16_t DIR_CrtTime;       // Offset 14: Creation time
+    uint16_t DIR_CrtDate;       // Offset 16: Creation date
+    uint16_t DIR_LstAccDate;    // Offset 18: Last access date
+    uint16_t DIR_FstClusHI;     // Offset 20: High word of cluster
+    uint16_t DIR_WrtTime;       // Offset 22: Write time
+    uint16_t DIR_WrtDate;       // Offset 24: Write date
+    uint16_t DIR_FstClusLO;     // Offset 26: Low word of cluster
+    uint32_t DIR_FileSize;      // Offset 28: File size in bytes
+} DirEntry;
+
+// directory attribute flags
+#define ATTR_READ_ONLY	0x01
+#define ATTR_HIDDEN 	0X02
+#define ATTR_SYSTEM	0X04
+#define ATTR_VOLUME_ID	0X08
+#define ATTR_DIRECTORY	0x10
+#define ATTR_ARCHIVE	0x20
+#define ATTR_LONG_NAME	(ATTR_READ_ONLY) | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_VOLUME_ID)
+
+
 // FAT32 context structure holding all mounted image state
 typedef struct {
     FILE *fp;                      // File pointer to the image
@@ -61,3 +86,12 @@ void fat32_unmount(void);
 uint32_t fat32_get_first_fat_sector(void);
 uint32_t fat32_get_first_data_sector(void);
 uint32_t fat32_get_total_clusters(void);
+
+// helper functions for phase 2
+uint32_t fat32_cluster_to_sector(uint32_t cluster);
+uint32_t fat32_get_next_cluster(uint32_t cluster);
+bool fat32_is_end_of_chain(uint32_t cluster_value);
+DirEntry* fat32_read_directry(uint32_t cluster, size_t *num_entries);
+void fat32_t_parse_dir_name(const uint8_t *dir_name, char *output, size_t output_size);
+uint32_t fat32_get_first_cluster(const DirEntry *entry);
+
