@@ -10,4 +10,3 @@ void cmd_info(tokenlist *tokens);
 void cmd_exit(tokenlist *tokens);
 void cmd_cd(tokenlist *tokens);
 void cmd_ls(tokenlist *tokens);
-
