@@ -35,7 +35,7 @@ const char* shell_get_prompt(void) {
     static char prompt[300];
     
     if (ctx != NULL && ctx->fp != NULL) {
-        snprintf(prompt, sizeof(prompt), "%s/>", ctx->image_name);
+        snprintf(prompt, sizeof(prompt), "%s%s/>", ctx->image_name);
     } else {
         snprintf(prompt, sizeof(prompt), "/>");
     }
